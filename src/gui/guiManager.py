@@ -1,36 +1,69 @@
 import tkinter as tk
+import util.initPATH as path_manager
+from constants.gui_constants import WINDOW_TITLE, WINDOW_SIZE
+from constants.path_constants import DEFAULT_PATH
 
 class GuiManager:
     def __init__(self):
         self.root = tk.Tk()
-        self.root.title("샤나인코더 매크로")
-        self.root.geometry("800x600")
+        self.root.title(WINDOW_TITLE)  # 직접 사용
+        self.root.geometry(WINDOW_SIZE)  # 직접 사용
         
-        self.create_widgets()
+        self.path_instance = path_manager.InitPATH()  # InitPATH 인스턴스 생성
         
-    def create_widgets(self):
+        if self.path_instance.isNonePath():
+            self.init_path()
+        else:
+            self.init_gui()
+        
+    def init_path(self):
         # 메인 프레임
         main_frame = tk.Frame(self.root)
         main_frame.pack(fill=tk.BOTH, expand=True)
         
-        #"파일디렉토리를 설정하세요" 텍스트 출력
-        self.text_box.insert(tk.END, "파일디렉토리를 설정하세요")
+        # 안내 문구 레이블 추가
+        self.instruction_label = tk.Label(main_frame, text="파일디렉토리를 설정하세요")
+        self.instruction_label.pack(pady=10)
         
         # 텍스트 박스 추가
-        self.text_box = tk.Text(main_frame, height=10, width=50)
+        self.text_box = tk.Text(main_frame, height=3, width=50)
         self.text_box.pack(pady=10)
         
-        # 버튼 추가
-        start_button = tk.Button(main_frame, text="시작", command=self.start_macro)
-        start_button.pack(pady=10)
+        # 기본 경로 출력
+        self.text_box.insert(tk.END, DEFAULT_PATH)
         
-        # 레이블 추가
-        self.status_label = tk.Label(main_frame, text="대기 중...")
+        # 버튼 추가
+        save_button = tk.Button(main_frame, text="저장", command=self.save_target_path)
+        save_button.pack(pady=10)
+        
+        # 상태 표시 레이블 추가
+        self.status_label = tk.Label(main_frame, text="")
         self.status_label.pack(pady=10)
         
-    def start_macro(self):
-        # 매크로 시작 로직
-        self.status_label.config(text="매크로 실행 중...")
+    def save_target_path(self):
+        # 텍스트 박스에서 경로 가져오기
+        path_value = self.text_box.get("1.0", tk.END).strip()
+        
+        # 경로 저장
+        self.path_instance.save_path("target_path", path_value)
+        
+        # 상태 업데이트
+        self.status_label.config(text="경로가 저장되었습니다!")
+        
+        # 잠시 후 메인 GUI로 전환
+        self.root.after(1500, self.switch_to_main_gui)
+        
+    def switch_to_main_gui(self):
+        # 현재 프레임의 모든 위젯 제거
+        for widget in self.root.winfo_children():
+            widget.destroy()
+        
+        # 메인 GUI 초기화
+        self.init_gui()
+        
+    def init_gui(self):
+        # 메인 GUI 구현
+        pass  # 여기에 메인 GUI 코드 구현
         
     def run(self):
         self.root.mainloop()
