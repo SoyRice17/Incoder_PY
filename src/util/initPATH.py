@@ -39,15 +39,14 @@ class InitPATH:
         
     def save_path(self, path_name: str, path_value: str) -> None:
         #파일 경로를 config.json에 저장
-        with open(self.config_path, 'r') as f:
+        with open(self.config_path, 'r+') as f:
             config = json.load(f)
+            config[FILE_PATH][path_name] = path_value
             
-        config[FILE_PATH][path_name] = path_value
-        #config.json에 저장
-        with open(self.config_path, 'w') as f:
-            #indent=2: 들여쓰기 2칸
-            json.dump(config, f, indent=2)
-                
+            f.seek(0) # 파일 포인터를 파일의 처음으로 이동
+            f.truncate() # 파일의 나머지 부분을 삭제
+            json.dump(config, f, indent=2) # 딕셔너리를 파일에 쓰기
+            
     def get_path(self, path_name: str) -> str:
         """저장된 파일 경로 가져오기"""
         with open(self.config_path, 'r') as f:

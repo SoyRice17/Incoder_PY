@@ -66,7 +66,35 @@ class GuiManager:
         
     def init_gui(self):
         # 메인 GUI 구현
-        pass  # 여기에 메인 GUI 코드 구현
+        main_frame = tk.Frame(self.root)
+        left_frame = tk.Frame(main_frame)
+        right_frame = tk.Frame(main_frame)
+        separator = tk.Frame(left_frame, height=2, bg="gray")
+        separator_right = tk.Frame(right_frame, height=2, bg="gray")
+        
+        self.selected_file_name_listbox = tk.Listbox(left_frame)
+        self.file_listbox = tk.Listbox(left_frame)
+        self.refresh_button = tk.Button(left_frame, text="새로고침")
+        
+        self.input_file_name_entry = tk.Entry(right_frame)
+        self.confirm_button = tk.Button(right_frame, text="확인")
+        self.delete_button = tk.Button(right_frame, text="삭제")
+        self.execute_button = tk.Button(right_frame, text="실행")
+        
+        main_frame.pack(fill=tk.BOTH, expand=True)
+        left_frame.pack(side=tk.LEFT, fill=tk.BOTH, expand=True)
+        right_frame.pack(side=tk.RIGHT, fill=tk.BOTH, expand=True)
+        
+        self.selected_file_name_listbox.pack(fill=tk.BOTH, expand=True)
+        separator.pack(fill=tk.X, pady=10)  # X 방향으로 채우기
+        self.file_listbox.pack(fill=tk.BOTH, expand=True)
+        self.refresh_button.pack(pady=10)
+        
+        self.input_file_name_entry.pack(fill=tk.BOTH, expand=True)
+        self.confirm_button.pack(pady=10)
+        self.delete_button.pack(pady=10)
+        separator_right.pack(fill=tk.X, pady=10)
+        self.execute_button.pack(pady=10)
         
     def run(self):
         self.root.mainloop() #mainloop: 윈도우 이벤트 루프를 시작하는 메서드
