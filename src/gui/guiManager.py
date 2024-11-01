@@ -1,5 +1,7 @@
 import tkinter as tk
 import util.initPATH as path_manager
+from gui.buttonManager import ButtonManager
+from gui.listboxManager import ListboxManager
 from constants.gui_constants import WINDOW_TITLE, WINDOW_SIZE
 from constants.path_constants import DEFAULT_PATH
 
@@ -10,7 +12,8 @@ class GuiManager:
         self.root.geometry(WINDOW_SIZE)  # 윈도우 크기
         
         self.path_instance = path_manager.InitPATH()  # InitPATH 인스턴스 생성
-        
+        self.button_manager = ButtonManager(self)
+        self.listbox_manager = ListboxManager(self)
         if self.path_instance.isNonePath(): # target_path의 value(경로)가 없는지 확인
             self.init_path()
         else:
@@ -67,34 +70,57 @@ class GuiManager:
     def init_gui(self):
         # 메인 GUI 구현
         main_frame = tk.Frame(self.root)
-        left_frame = tk.Frame(main_frame)
-        right_frame = tk.Frame(main_frame)
-        separator = tk.Frame(left_frame, height=2, bg="gray")
-        separator_right = tk.Frame(right_frame, height=2, bg="gray")
+        top_frame = tk.Frame(main_frame)
+        bottom_frame = tk.Frame(main_frame)
+        top_left_frame = tk.Frame(top_frame)
+        top_right_frame = tk.Frame(top_frame)
         
-        self.selected_file_name_listbox = tk.Listbox(left_frame)
-        self.file_listbox = tk.Listbox(left_frame)
-        self.refresh_button = tk.Button(left_frame, text="새로고침")
+        #separator = tk.Frame(top_frame, height=2, bg="gray")
+        #separator_bottom = tk.Frame(bottom_frame, height=2, bg="gray")
         
-        self.input_file_name_entry = tk.Entry(right_frame)
-        self.confirm_button = tk.Button(right_frame, text="확인")
-        self.delete_button = tk.Button(right_frame, text="삭제")
-        self.execute_button = tk.Button(right_frame, text="실행")
+        self.selected_file_name_listbox = tk.Listbox(top_right_frame)
+        self.selected_file_name_listbox.bind('<Double-Button-1>', self.listbox_manager.delete_selected_file_name)
+        self.file_listbox = tk.Listbox(top_left_frame)
+        self.file_listbox.bind('<Double-Button-1>', self.listbox_manager.insert_input_file_name_entry)
+        self.refresh_button = tk.Button(
+            bottom_frame, 
+            text="새로고침",
+            command=self.button_manager.refresh_file_list
+        )
+        
+        self.input_file_name_entry = tk.Entry(bottom_frame)
+        self.confirm_button = tk.Button(
+            bottom_frame, 
+            text="확인",
+            command=self.button_manager.confirm_selcetion
+        )
+        self.delete_button = tk.Button(
+            bottom_frame, 
+            text="삭제",
+            command=self.button_manager.delete_selected_file_listbox
+        )
+        self.execute_button = tk.Button(
+            bottom_frame, 
+            text="실행",
+            #command=self.button_manager.execute_file_conversion
+        )
         
         main_frame.pack(fill=tk.BOTH, expand=True)
-        left_frame.pack(side=tk.LEFT, fill=tk.BOTH, expand=True)
-        right_frame.pack(side=tk.RIGHT, fill=tk.BOTH, expand=True)
+        top_frame.pack(fill=tk.BOTH, expand=True)
+        top_left_frame.pack(side=tk.LEFT, fill=tk.BOTH, expand=True)
+        top_right_frame.pack(side=tk.RIGHT, fill=tk.BOTH, expand=True)
+        bottom_frame.pack(side=tk.BOTTOM, fill=tk.X, expand=True)
         
         self.selected_file_name_listbox.pack(fill=tk.BOTH, expand=True)
-        separator.pack(fill=tk.X, pady=10)  # X 방향으로 채우기
         self.file_listbox.pack(fill=tk.BOTH, expand=True)
-        self.refresh_button.pack(pady=10)
         
-        self.input_file_name_entry.pack(fill=tk.BOTH, expand=True)
-        self.confirm_button.pack(pady=10)
-        self.delete_button.pack(pady=10)
-        separator_right.pack(fill=tk.X, pady=10)
-        self.execute_button.pack(pady=10)
+        self.input_file_name_entry.pack(fill=tk.X, pady=10, expand=True)
+        self.refresh_button.pack(side=tk.LEFT, padx=15)
+        self.confirm_button.pack(side=tk.LEFT, padx=15)
+        self.delete_button.pack(side=tk.LEFT, padx=15)
+        self.execute_button.pack(side=tk.LEFT, padx=15)
+        
+        self.button_manager.refresh_file_list()
         
     def run(self):
         self.root.mainloop() #mainloop: 윈도우 이벤트 루프를 시작하는 메서드
