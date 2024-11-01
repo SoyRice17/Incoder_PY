@@ -10,6 +10,8 @@ class ConfigCreator:
             "repeat_title": {}
         }
     def create_config(self):
+        if os.path.exists(self.config_path):
+            return True
         try:
             os.makedirs(os.path.dirname(self.config_path), exist_ok=True)  # 디렉토리가 없으면 생성
             with open(self.config_path, "w") as f:

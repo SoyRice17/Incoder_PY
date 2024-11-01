@@ -11,6 +11,7 @@ class ButtonManager:
         if not target_path:
             return
         file_list = [f for f in os.listdir(target_path) if os.path.isfile(os.path.join(target_path, f))]
+        file_list.sort()
         
         self.gui_instance.file_listbox.delete(0, 'end')
         for file_name in file_list:
