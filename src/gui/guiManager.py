@@ -1,5 +1,4 @@
 import tkinter as tk
-import tkinter.ttk as ttk
 import util.initPATH as path_manager
 from gui.buttonManager import ButtonManager
 from gui.listboxManager import ListboxManager
@@ -9,11 +8,24 @@ from constants.path_constants import DEFAULT_PATH
 class GuiManager:
     def __init__(self):
         self.root = tk.Tk()
-        self.root.title(WINDOW_TITLE)
-        self.root.geometry(WINDOW_SIZE)
+        self.root.title(WINDOW_TITLE) # 프로그램 제목
+        self.root.geometry(WINDOW_SIZE)# 프로그램 창설정
         
+        """
+            InitPATH모듈 인스턴스 생성
+            isNonePath() = config.json의 key인 target_path의 값이 있는지 확인
+            savePath(path_name,path_value) = path_name의 키를 찾고 해당 키에 path_value의 값을 추가
+            getPath(path_name) = path_name의 값을 리턴
+        """
         self.path_instance = path_manager.InitPATH()
+        """
+            ButtonManager모듈 인스턴스 생성
+            
+        """
         self.button_manager = ButtonManager(self)
+        """
+            ListboxManager모듈 인스턴스 생성
+        """
         self.listbox_manager = ListboxManager(self)
         
         # 메인 프레임 생성 (모든 화면이 공유)
@@ -30,15 +42,15 @@ class GuiManager:
         self.show_loading_screen()
         
         # 현재 프레임 내용 제거
-        for widget in self.main_frame.winfo_children():
-            widget.destroy()
+        for widget in self.main_frame.winfo_children(): #main_frame의 모든 자식 객체를 리턴
+            widget.destroy() # 모든 자식 객체를 제거
             
-        if self.path_instance.isNonePath():
-            self.show_path_screen()
+        if self.path_instance.isNonePath(): #config.json의 target_path 키의 값이 존재여부 판단
+            self.show_path_screen() # 값이 없다면 값을 설정하는 스크린을 출력
         else:
-            self.show_main_screen()
+            self.show_main_screen() # 값이 존재하면 메인 스크린 출력
     
-    def show_loading_screen(self):
+    def show_loading_screen(self): # 메인화면에 많은 데이터가 가중될때 화면 출력이 지연되는 것을 방지해 로딩화면 출력
         # 현재 프레임 내용 제거
         for widget in self.main_frame.winfo_children():
             widget.destroy()
@@ -73,7 +85,6 @@ class GuiManager:
         self.status_label.pack(pady=10)
     
     def show_main_screen(self):
-        # 기존 init_gui의 내용
         top_frame = tk.Frame(self.main_frame)
         bottom_frame = tk.Frame(self.main_frame)
         
