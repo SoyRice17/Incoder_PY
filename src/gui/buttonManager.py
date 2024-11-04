@@ -35,3 +35,6 @@ class ButtonManager:
                 break
         self.gui_instance.input_file_name_entry.delete(0, 'end')
         
+    def execute_file_conversion(self) -> None:
+        file_dir_list = []
+        pass
