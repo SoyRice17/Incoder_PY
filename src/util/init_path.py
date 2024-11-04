@@ -3,10 +3,10 @@ import os
 from constants.config_constants import CONFIG_FILE, FILE_PATH, TARGET_PATH
 
 
-class InitPATH:
+class InitPath:
     def __init__(self):
         """ __file__:
-            현재 파일: /Users/.../shanaMacro/src/util/initPATH.py
+            현재 파일: /Users/.../shanaMacro/src/util/init_path.py
             ↓ dirname 한 번
             /Users/.../shanaMacro/src/util
             ↓ dirname 한 번 더

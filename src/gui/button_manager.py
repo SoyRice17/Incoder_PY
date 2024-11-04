@@ -17,7 +17,7 @@ class ButtonManager:
         for file_name in file_list:
             self.gui_instance.file_listbox.insert('end', file_name)
     
-    def confirm_selcetion(self) -> None:
+    def confirm_selection(self) -> None:
         input_name = self.gui_instance.input_file_name_entry.get()
         if not input_name:
             return

@@ -1,7 +1,10 @@
+# 표준 라이브러리
 import tkinter as tk
-import util.initPATH as path_manager
-from gui.buttonManager import ButtonManager
-from gui.listboxManager import ListboxManager
+
+# 로컬 모듈
+import util.init_path as path_manager
+from gui.button_manager import ButtonManager
+from gui.listbox_manager import ListboxManager
 from constants.gui_constants import WINDOW_TITLE, WINDOW_SIZE
 from constants.path_constants import DEFAULT_PATH
 
@@ -17,7 +20,7 @@ class GuiManager:
             savePath(path_name,path_value) = path_name의 키를 찾고 해당 키에 path_value의 값을 추가
             getPath(path_name) = path_name의 값을 리턴
         """
-        self.path_instance = path_manager.InitPATH()
+        self.path_instance = path_manager.InitPath()
         """ Note
             ButtonManager모듈 인스턴스 생성
             refresh_file_list() = 파일 목록을 새로고침하는 메서드
@@ -116,7 +119,7 @@ class GuiManager:
         self.confirm_button = tk.Button(
             bottom_frame, 
             text="확인",
-            command=self.button_manager.confirm_selcetion
+            command=self.button_manager.confirm_selection
         )
         self.delete_button = tk.Button(
             bottom_frame, 
