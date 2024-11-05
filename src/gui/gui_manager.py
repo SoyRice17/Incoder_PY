@@ -5,6 +5,8 @@ import tkinter as tk
 import util.init_path as path_manager
 from gui.button_manager import ButtonManager
 from gui.listbox_manager import ListboxManager
+from gui.label_manager import LabelManager
+from constants.config_constants import OUTPUT_PATH,TARGET_PATH
 from constants.gui_constants import WINDOW_TITLE, WINDOW_SIZE
 from constants.path_constants import DEFAULT_PATH
 
@@ -34,6 +36,12 @@ class GuiManager:
             insert_input_file_name_entry() = gui의 file_listbox에서 더블클릭한 파일을 gui의 input_file_name_entry에 추가하는 메서드
         """
         self.listbox_manager = ListboxManager(self)
+        """ Note
+            LabelManager모듈 인스턴스 생성
+            update_input_path_label() = gui의 input_path_label에 파일 경로를 설정하는 메서드
+            update_output_path_label() = gui의 output_path_label에 출력 경로를 설정하는 메서드
+        """
+        self.label_manager = LabelManager(self)
         
         # 메인 프레임 생성 (모든 화면이 공유)
         self.main_frame = tk.Frame(self.root)
@@ -52,7 +60,7 @@ class GuiManager:
         for widget in self.main_frame.winfo_children(): #main_frame의 모든 자식 객체를 리턴
             widget.destroy() # 모든 자식 객체를 제거
             
-        if self.path_instance.isNonePath(): #config.json의 target_path 키의 값이 존재여부 판단
+        if self.path_instance.isNonePath(TARGET_PATH): #config.json의 target_path 키의 값이 존재여부 판단
             self.show_path_screen() # 값이 없다면 값을 설정하는 스크린을 출력
         else:
             self.show_main_screen() # 값이 존재하면 메인 스크린 출력
@@ -67,6 +75,7 @@ class GuiManager:
         self.loading_screen_active = True
         self.root.update()  # GUI 즉시 업데이트
     
+    # FIX: 파일경로 시스템 필요없어짐 삭제 예정
     def show_path_screen(self):
         """ Note
             pack: 위젯을 컨테이너에 배치하는 메서드
@@ -74,7 +83,7 @@ class GuiManager:
             expand=True: 컨테이너를 부모 윈도우에 맞게 크기 조절 
         """
         # 안내 문구 레이블 추가
-        self.instruction_label = tk.Label(self.main_frame, text="파일디렉토리를 설정하세요") # Label: 텍스트 또는 이미지를 표시하는 위젯
+        self.instruction_label = tk.Label(self.main_frame, text="파일디렉토리를 설정하세���") # Label: 텍스트 또는 이미지를 표시하는 위젯
         self.instruction_label.pack(pady=10) #pack: 위젯을 컨테이너에 배치하는 메서드 , pady=10: 위젯과 컨테이너 사이의 여백
         
         # 텍스트 박스 추가
@@ -99,56 +108,117 @@ class GuiManager:
         # 메인 GUI 구현
         top_frame = tk.Frame(self.main_frame)
         bottom_frame = tk.Frame(self.main_frame)
-        top_left_frame = tk.Frame(top_frame)
-        top_right_frame = tk.Frame(top_frame)
+        top_left_frame = tk.LabelFrame(
+            top_frame,
+            text="파일 목록",
+            font=('Helvetica', 10),
+            relief=tk.RAISED
+        )
+        top_right_frame = tk.LabelFrame(
+            top_frame,
+            text="선택 파일 목록",
+            font=('Helvetica', 10),
+            relief=tk.RAISED
+        )
+        bottom_top_frame = tk.Frame(
+            bottom_frame,
+            relief=tk.RAISED,
+            borderwidth=1
+        )
+        bottom_bottom_frame = tk.Frame(
+            bottom_frame,
+            relief=tk.RAISED,
+            borderwidth=1
+        )
         
-        #separator = tk.Frame(top_frame, height=2, bg="gray")
-        #separator_bottom = tk.Frame(bottom_frame, height=2, bg="gray")
-        
-        self.selected_file_name_listbox = tk.Listbox(top_right_frame)
+        # 리스트박스 추가
+        self.selected_file_name_listbox = tk.Listbox(
+            top_right_frame,
+            font=('Helvetica', 10),
+        )
         self.selected_file_name_listbox.bind('<Double-Button-1>', self.listbox_manager.delete_selected_file_name)
-        self.file_listbox = tk.Listbox(top_left_frame)
+        self.file_listbox = tk.Listbox(
+            top_left_frame,
+            font=('Helvetica', 10),
+        )
         self.file_listbox.bind('<Double-Button-1>', self.listbox_manager.insert_input_file_name_entry)
+        
+        # 버튼 추가
         self.refresh_button = tk.Button(
-            bottom_frame, 
+            bottom_bottom_frame, 
             text="새로고침",
             command=self.button_manager.refresh_file_list
         )
-        
-        self.input_file_name_entry = tk.Entry(bottom_frame)
         self.confirm_button = tk.Button(
-            bottom_frame, 
+            bottom_bottom_frame, 
             text="확인",
             command=self.button_manager.confirm_selection
         )
         self.delete_button = tk.Button(
-            bottom_frame, 
+            bottom_bottom_frame, 
             text="삭제",
             command=self.button_manager.delete_selected_file_listbox
         )
         self.execute_button = tk.Button(
-            bottom_frame, 
+            bottom_bottom_frame, 
             text="실행",
             #command=self.button_manager.execute_file_conversion
         )
+        # 레이블 추가
+        self.input_path_label = tk.Label(
+            bottom_top_frame,
+            text="파일 경로",
+            font=('Helvetica', 10),
+        )
+        self.output_path_label = tk.Label(
+            bottom_top_frame,
+            text="출력 경로",
+            font=('Helvetica', 10),
+        )
+        # 입력 필드 추가
+        self.input_file_name_entry = tk.Entry(
+            bottom_top_frame,
+            font=('Helvetica', 10),
+            
+        )
         
-        self.main_frame.pack(fill=tk.BOTH, expand=True)
-        top_frame.pack(fill=tk.BOTH, expand=True)
+        # 프레임 배치
+        self.main_frame.pack(side=tk.TOP, fill=tk.BOTH, expand=True)
+        top_frame.pack(side=tk.TOP, fill=tk.BOTH, expand=True)
         top_left_frame.pack(side=tk.LEFT, fill=tk.BOTH, expand=True)
         top_right_frame.pack(side=tk.RIGHT, fill=tk.BOTH, expand=True)
-        bottom_frame.pack(side=tk.BOTTOM, fill=tk.X, expand=True)
+        bottom_frame.pack(side=tk.BOTTOM, fill=tk.BOTH, expand=True)
+        bottom_top_frame.pack(side=tk.TOP, fill=tk.BOTH, expand=True)
+        bottom_bottom_frame.pack(side=tk.BOTTOM, fill=tk.BOTH, expand=True)
         
-        self.selected_file_name_listbox.pack(fill=tk.BOTH, expand=True)
-        self.file_listbox.pack(fill=tk.BOTH, expand=True)
+        # 리스트박스 배치
+        self.selected_file_name_listbox.pack(side=tk.TOP, fill=tk.BOTH, expand=True)
+        self.file_listbox.pack(side=tk.TOP, fill=tk.BOTH, expand=True)
         
-        self.input_file_name_entry.pack(fill=tk.X, pady=10, expand=True)
-        self.refresh_button.pack(side=tk.LEFT, padx=15)
-        self.confirm_button.pack(side=tk.LEFT, padx=15)
-        self.delete_button.pack(side=tk.LEFT, padx=15)
-        self.execute_button.pack(side=tk.LEFT, padx=15)
+        # 입력 필드와 버튼 배치
+        self.input_file_name_entry.pack(side=tk.TOP, fill=tk.X, expand=True, pady=10)
+        self.refresh_button.pack(side=tk.LEFT, fill=tk.NONE, expand=False, padx=15)
+        self.confirm_button.pack(side=tk.LEFT, fill=tk.NONE, expand=False, padx=15)
+        self.delete_button.pack(side=tk.LEFT, fill=tk.NONE, expand=False, padx=15)
+        self.execute_button.pack(side=tk.LEFT, fill=tk.NONE, expand=False, padx=15)
         
+        # 레이블 배치
+        self.input_path_label.pack(side=tk.TOP, fill=tk.NONE, expand=False, padx=15)
+        self.output_path_label.pack(side=tk.TOP, fill=tk.NONE, expand=False, padx=15)
+        
+        
+        if self.path_instance.isNonePath(TARGET_PATH):
+            self.label_manager.set_input_path_label()
+        else:
+            self.label_manager.update_input_path_label()
+        
+        if self.path_instance.isNonePath(OUTPUT_PATH):
+            self.label_manager.set_output_path_label()
+        else:
+            self.label_manager.update_output_path_label()
+            
         self.button_manager.refresh_file_list()
-        
+            
     def save_target_path(self):
         # 텍스트 박스에서 경로 가져오기
         path_value = self.text_box.get("1.0", tk.END).strip() #get: 텍스트 박스에서 텍스트를 가져오는 메서드 , "1.0": 텍스트 박스의 첫 번째 줄의 첫 번째 문자 , tk.END: 텍스트 박스의 끝 , strip(): 문자열의 양쪽 끝에서 공백 문자를 제거하는 메서드

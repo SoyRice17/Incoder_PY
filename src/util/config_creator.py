@@ -5,7 +5,8 @@ class ConfigCreator:
         self.config_path = os.path.join(os.path.dirname(os.path.dirname(__file__)), "config.json")
         self.initial_config = {
             "file_PATH": {
-                "target_path": ""
+                "target_path": "",
+                "output_path": ""
             },
             "repeat_title": {}
         }

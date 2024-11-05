@@ -15,7 +15,7 @@ class InitPath:
             /Users/.../shanaMacro/src/config.json"""
         self.config_path = os.path.join(os.path.dirname(os.path.dirname(__file__)), CONFIG_FILE)
     
-    def isNonePath(self) -> bool:
+    def isNonePath(self, path_name: str) -> bool:
         #target_path의 value가 없는지 확인
         """ with: 컨텍스트 매니저를 시작하는 키워드
                 리소스를 자동으로 관리함
@@ -32,7 +32,7 @@ class InitPath:
         with open(self.config_path, 'r') as f:
             config = json.load(f) # 딕셔너리 형태로 파일 읽기
         #target_path의 value가 없는지 확인
-        if config[FILE_PATH].get(TARGET_PATH) == "":
+        if config[FILE_PATH].get(path_name) == "":
             return True
         else:
             return False
