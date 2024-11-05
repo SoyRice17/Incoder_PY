@@ -96,8 +96,9 @@ class GuiManager:
             relief=tk.RAISED,
             borderwidth=1
         )
-        bottom_bottom_frame = tk.Frame(
+        button_frame = tk.Frame(
             bottom_frame,
+            height=100,
             relief=tk.RAISED,
             borderwidth=1
         )
@@ -116,22 +117,22 @@ class GuiManager:
         
         # 버튼 추가
         self.refresh_button = tk.Button(
-            bottom_bottom_frame, 
+            button_frame, 
             text="새로고침",
             command=self.button_manager.refresh_file_list
         )
         self.confirm_button = tk.Button(
-            bottom_bottom_frame, 
+            button_frame, 
             text="확인",
             command=self.button_manager.confirm_selection
         )
         self.delete_button = tk.Button(
-            bottom_bottom_frame, 
+            button_frame, 
             text="삭제",
             command=self.button_manager.delete_selected_file_listbox
         )
         self.execute_button = tk.Button(
-            bottom_bottom_frame, 
+            button_frame, 
             text="실행",
             #command=self.button_manager.execute_file_conversion
         )
@@ -162,11 +163,16 @@ class GuiManager:
         top_right_frame.pack(side=tk.RIGHT, fill=tk.BOTH, expand=True)
         bottom_frame.pack(side=tk.BOTTOM, fill=tk.BOTH, expand=True)
         bottom_top_frame.pack(side=tk.TOP, fill=tk.BOTH, expand=True)
-        bottom_bottom_frame.pack(side=tk.BOTTOM, fill=tk.BOTH, expand=True)
+        button_frame.pack(side=tk.BOTTOM, fill=tk.X, expand=True)
+        button_frame.pack_propagate(False)
         
         # 리스트박스 배치
         self.selected_file_name_listbox.pack(side=tk.TOP, fill=tk.BOTH, expand=True)
         self.file_listbox.pack(side=tk.TOP, fill=tk.BOTH, expand=True)
+        
+        # 레이블 배치
+        self.input_path_label.pack(side=tk.TOP, fill=tk.X, expand=False, padx=15)
+        self.output_path_label.pack(side=tk.TOP, fill=tk.X, expand=False, padx=15)
         
         # 입력 필드와 버튼 배치
         self.input_file_name_entry.pack(side=tk.TOP, fill=tk.X, expand=True, pady=10)
@@ -174,11 +180,6 @@ class GuiManager:
         self.confirm_button.pack(side=tk.LEFT, fill=tk.X, expand=True, padx=15)
         self.delete_button.pack(side=tk.LEFT, fill=tk.X, expand=True, padx=15)
         self.execute_button.pack(side=tk.LEFT, fill=tk.X, expand=True, padx=15)
-        
-        # 레이블 배치
-        self.input_path_label.pack(side=tk.TOP, fill=tk.X, expand=False, padx=15)
-        self.output_path_label.pack(side=tk.TOP, fill=tk.X, expand=False, padx=15)
-        
         
         if self.path_instance.isNonePath(TARGET_PATH):
             self.label_manager.set_input_path_label()
