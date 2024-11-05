@@ -60,10 +60,7 @@ class GuiManager:
         for widget in self.main_frame.winfo_children(): #main_frame의 모든 자식 객체를 리턴
             widget.destroy() # 모든 자식 객체를 제거
             
-        if self.path_instance.isNonePath(TARGET_PATH): #config.json의 target_path 키의 값이 존재여부 판단
-            self.show_path_screen() # 값이 없다면 값을 설정하는 스크린을 출력
-        else:
-            self.show_main_screen() # 값이 존재하면 메인 스크린 출력
+        self.show_main_screen() # 값이 존재하면 메인 스크린 출력
     
     def show_loading_screen(self): # 메인화면에 많은 데이터가 가중될때 화면 출력이 지연되는 것을 방지해 로딩화면 출력
         # 현재 프레임 내용 제거
@@ -74,32 +71,6 @@ class GuiManager:
         loading_label.pack(expand=True)
         self.loading_screen_active = True
         self.root.update()  # GUI 즉시 업데이트
-    
-    # FIX: 파일경로 시스템 필요없어짐 삭제 예정
-    def show_path_screen(self):
-        """ Note
-            pack: 위젯을 컨테이너에 배치하는 메서드
-            fill=tk.BOTH: 컨테이너를 부모 윈도우에 맞게 크기 조절
-            expand=True: 컨테이너를 부모 윈도우에 맞게 크기 조절 
-        """
-        # 안내 문구 레이블 추가
-        self.instruction_label = tk.Label(self.main_frame, text="파일디렉토리를 설정하세���") # Label: 텍스트 또는 이미지를 표시하는 위젯
-        self.instruction_label.pack(pady=10) #pack: 위젯을 컨테이너에 배치하는 메서드 , pady=10: 위젯과 컨테이너 사이의 여백
-        
-        # 텍스트 박스 추가
-        self.text_box = tk.Text(self.main_frame, height=3, width=50) # Text: 여러 줄의 텍스트를 표시하고 입력할 수 있는 위젯
-        self.text_box.pack(pady=10) #pack: 위젯을 컨테이너에 배치하는 메서드 , pady=10: 위젯과 컨테이너 사이의 여백
-        
-        # 기본 경로 출력
-        self.text_box.insert(tk.END, DEFAULT_PATH) #insert: 텍스트 박스에 텍스트를 삽입하는 메서드 , tk.END: 텍스트 박스의 끝에 텍스트를 삽입   
-        
-        # 버튼 추가
-        save_button = tk.Button(self.main_frame, text="저장", command=self.save_target_path)
-        save_button.pack(pady=10)
-        
-        # 상태 표시 레이블 추가
-        self.status_label = tk.Label(self.main_frame, text="")
-        self.status_label.pack(pady=10)
     
     def show_main_screen(self):
         top_frame = tk.Frame(self.main_frame)
@@ -169,11 +140,13 @@ class GuiManager:
             bottom_top_frame,
             text="파일 경로",
             font=('Helvetica', 10),
+            anchor=tk.W
         )
         self.output_path_label = tk.Label(
             bottom_top_frame,
             text="출력 경로",
             font=('Helvetica', 10),
+            anchor=tk.W
         )
         # 입력 필드 추가
         self.input_file_name_entry = tk.Entry(
@@ -197,14 +170,14 @@ class GuiManager:
         
         # 입력 필드와 버튼 배치
         self.input_file_name_entry.pack(side=tk.TOP, fill=tk.X, expand=True, pady=10)
-        self.refresh_button.pack(side=tk.LEFT, fill=tk.NONE, expand=False, padx=15)
-        self.confirm_button.pack(side=tk.LEFT, fill=tk.NONE, expand=False, padx=15)
-        self.delete_button.pack(side=tk.LEFT, fill=tk.NONE, expand=False, padx=15)
-        self.execute_button.pack(side=tk.LEFT, fill=tk.NONE, expand=False, padx=15)
+        self.refresh_button.pack(side=tk.LEFT, fill=tk.X, expand=True, padx=15)
+        self.confirm_button.pack(side=tk.LEFT, fill=tk.X, expand=True, padx=15)
+        self.delete_button.pack(side=tk.LEFT, fill=tk.X, expand=True, padx=15)
+        self.execute_button.pack(side=tk.LEFT, fill=tk.X, expand=True, padx=15)
         
         # 레이블 배치
-        self.input_path_label.pack(side=tk.TOP, fill=tk.NONE, expand=False, padx=15)
-        self.output_path_label.pack(side=tk.TOP, fill=tk.NONE, expand=False, padx=15)
+        self.input_path_label.pack(side=tk.TOP, fill=tk.X, expand=False, padx=15)
+        self.output_path_label.pack(side=tk.TOP, fill=tk.X, expand=False, padx=15)
         
         
         if self.path_instance.isNonePath(TARGET_PATH):
@@ -219,19 +192,6 @@ class GuiManager:
             
         self.button_manager.refresh_file_list()
             
-    def save_target_path(self):
-        # 텍스트 박스에서 경로 가져오기
-        path_value = self.text_box.get("1.0", tk.END).strip() #get: 텍스트 박스에서 텍스트를 가져오는 메서드 , "1.0": 텍스트 박스의 첫 번째 줄의 첫 번째 문자 , tk.END: 텍스트 박스의 끝 , strip(): 문자열의 양쪽 끝에서 공백 문자를 제거하는 메서드
-        
-        # 경로 저장
-        self.path_instance.save_path("target_path", path_value)
-        
-        # 상태 업데이트
-        self.status_label.config(text="경로가 저장되었습니다!") #config: 위젯의 속성을 설정하는 메서드
-        
-        # 잠시 후 메인 GUI로 전환
-        self.root.after(1500, self.show_appropriate_screen) #after: 지정된 시간 후에 함수를 호출하는 메서드 , 1500: 1.5초 , self.show_appropriate_screen: 적절한 화면으로 전환하는 메서드
-        
     def run(self):
         self.root.mainloop() #mainloop: 윈도우 이벤트 루프를 시작하는 메서드
 
