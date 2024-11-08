@@ -198,6 +198,7 @@ class GuiManager:
         self.create_widgets()
         self.place_frames()
         self.place_widgets()
+        
         # 경로 설정
         if self.path_instance.isNonePath(TARGET_PATH):
             self.label_manager.set_input_path_label()
@@ -212,10 +213,14 @@ class GuiManager:
         # 파일 목록 새로고침
         self.button_manager.refresh_file_list()
         
-        self.video_encoder = VideoEncoder(self)
-        self.execute_button.config(command=self.video_encoder.encode)
-        
-            
+        # execute_button에 직접 메서드 연결
+        self.execute_button.config(command=self.execute_video_encoding)
+
+    def execute_video_encoding(self):
+        # 실행 버튼을 누를 때마다 새로운 VideoEncoder 인스턴스 생성
+        video_encoder = VideoEncoder(self)
+        video_encoder.encode()
+    
     def run(self):
         self.root.mainloop() #mainloop: 윈도우 이벤트 루프를 시작하는 메서드
 
