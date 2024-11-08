@@ -74,101 +74,99 @@ class GuiManager:
         self.loading_screen_active = True
         self.root.update()  # GUI 즉시 업데이트
     
-    def show_main_screen(self):
-        top_frame = tk.Frame(self.main_frame)
-        bottom_frame = tk.Frame(self.main_frame)
-        
-        # 메인 GUI 구현
-        top_frame = tk.Frame(self.main_frame)
-        bottom_frame = tk.Frame(self.main_frame)
-        top_left_frame = tk.LabelFrame(
-            top_frame,
+    def create_frames(self):
+        self.top_frame = tk.Frame(self.main_frame)
+        self.bottom_frame = tk.Frame(self.main_frame)
+        self.top_left_frame = tk.LabelFrame(
+            self.top_frame,
             text="파일 목록",
             font=('Helvetica', 10),
             relief=tk.RAISED
         )
-        top_right_frame = tk.LabelFrame(
-            top_frame,
+        self.top_right_frame = tk.LabelFrame(
+            self.top_frame,
             text="선택 파일 목록",
             font=('Helvetica', 10),
             relief=tk.RAISED
         )
-        bottom_top_frame = tk.Frame(
-            bottom_frame,
+        self.bottom_top_frame = tk.Frame(
+            self.bottom_frame,
             relief=tk.RAISED,
             borderwidth=1
         )
-        button_frame = tk.Frame(
-            bottom_frame,
+        self.button_frame = tk.Frame(
+            self.bottom_frame,
             height=100,
             relief=tk.RAISED,
             borderwidth=1
         )
-        
+    
+    def create_widgets(self):
         # 리스트박스 추가
         self.selected_file_name_listbox = tk.Listbox(
-            top_right_frame,
+            self.top_right_frame,
             font=('Helvetica', 10),
         )
         self.selected_file_name_listbox.bind('<Double-Button-1>', self.listbox_manager.delete_selected_file_name)
         self.file_listbox = tk.Listbox(
-            top_left_frame,
+            self.top_left_frame,
             font=('Helvetica', 10),
         )
         self.file_listbox.bind('<Double-Button-1>', self.listbox_manager.insert_input_file_name_entry)
         
         # 버튼 추가
         self.refresh_button = tk.Button(
-            button_frame, 
+            self.button_frame, 
             text="새로고침",
             command=self.button_manager.refresh_file_list
         )
         self.confirm_button = tk.Button(
-            button_frame, 
+            self.button_frame, 
             text="확인",
             command=self.button_manager.confirm_selection
         )
         self.delete_button = tk.Button(
-            button_frame, 
+            self.button_frame, 
             text="삭제",
             command=self.button_manager.delete_selected_file_listbox
         )
         self.execute_button = tk.Button(
-            button_frame, 
+            self.button_frame, 
             text="실행",
             command=self.video_grapper.get_video_list
         )
         # 레이블 추가
         self.input_path_label = tk.Label(
-            bottom_top_frame,
+            self.bottom_top_frame,
             text="파일 경로",
             font=('Helvetica', 10),
             anchor=tk.W
         )
         self.output_path_label = tk.Label(
-            bottom_top_frame,
+            self.bottom_top_frame,
             text="출력 경로",
             font=('Helvetica', 10),
             anchor=tk.W
         )
         # 입력 필드 추가
         self.input_file_name_entry = tk.Entry(
-            bottom_top_frame,
+            self.bottom_top_frame,
             font=('Helvetica', 10),
             
         )
-        
+    
+    def place_frames(self):
         # 프레임 배치
         self.main_frame.pack(side=tk.TOP, fill=tk.BOTH, expand=True)
-        top_frame.pack(side=tk.TOP, fill=tk.BOTH, expand=True)
-        top_left_frame.pack(side=tk.LEFT, fill=tk.BOTH, expand=True)
-        top_right_frame.pack(side=tk.RIGHT, fill=tk.BOTH, expand=True)
-        bottom_frame.pack(side=tk.BOTTOM, fill=tk.BOTH, expand=True)
-        bottom_top_frame.pack(side=tk.TOP, fill=tk.BOTH, expand=True)
-        button_frame.pack(side=tk.BOTTOM, fill=tk.X, expand=True)
-        button_frame.pack_propagate(False)
-        
-        # 리스트박스 배치
+        self.top_frame.pack(side=tk.TOP, fill=tk.BOTH, expand=True)
+        self.top_left_frame.pack(side=tk.LEFT, fill=tk.BOTH, expand=True)
+        self.top_right_frame.pack(side=tk.RIGHT, fill=tk.BOTH, expand=True)
+        self.bottom_frame.pack(side=tk.BOTTOM, fill=tk.BOTH, expand=True)
+        self.bottom_top_frame.pack(side=tk.TOP, fill=tk.BOTH, expand=True)
+        self.button_frame.pack(side=tk.BOTTOM, fill=tk.X, expand=True)
+        self.button_frame.pack_propagate(False)
+    
+    def place_widgets(self):
         self.selected_file_name_listbox.pack(side=tk.TOP, fill=tk.BOTH, expand=True)
         self.file_listbox.pack(side=tk.TOP, fill=tk.BOTH, expand=True)
         
@@ -182,7 +180,13 @@ class GuiManager:
         self.confirm_button.pack(side=tk.LEFT, fill=tk.X, expand=True, padx=15)
         self.delete_button.pack(side=tk.LEFT, fill=tk.X, expand=True, padx=15)
         self.execute_button.pack(side=tk.LEFT, fill=tk.X, expand=True, padx=15)
-        
+    
+    def show_main_screen(self):
+        self.create_frames()
+        self.create_widgets()
+        self.place_frames()
+        self.place_widgets()
+        # 경로 설정
         if self.path_instance.isNonePath(TARGET_PATH):
             self.label_manager.set_input_path_label()
         else:
@@ -192,7 +196,8 @@ class GuiManager:
             self.label_manager.set_output_path_label()
         else:
             self.label_manager.update_output_path_label()
-            
+        
+        # 파일 목록 새로고침
         self.button_manager.refresh_file_list()
             
     def run(self):
