@@ -102,17 +102,27 @@ class GuiManager:
         )
     
     def create_widgets(self):
+        #스크롤바 생성
+        self.selected_file_name_scrollbar = tk.Scrollbar(self.top_right_frame)
+        self.file_listbox_scrollbar = tk.Scrollbar(self.top_left_frame)
+        
         # 리스트박스 추가
         self.selected_file_name_listbox = tk.Listbox(
             self.top_right_frame,
             font=('Helvetica', 10),
+            yscrollcommand=self.selected_file_name_scrollbar.set
         )
         self.selected_file_name_listbox.bind('<Double-Button-1>', self.listbox_manager.delete_selected_file_name)
         self.file_listbox = tk.Listbox(
             self.top_left_frame,
             font=('Helvetica', 10),
+            yscrollcommand=self.file_listbox_scrollbar.set
         )
         self.file_listbox.bind('<Double-Button-1>', self.listbox_manager.insert_input_file_name_entry)
+        
+        # 스크롤바 설정
+        self.file_listbox_scrollbar.config(command=self.file_listbox.yview)
+        self.selected_file_name_scrollbar.config(command=self.selected_file_name_listbox.yview)
         
         # 버튼 추가
         self.refresh_button = tk.Button(
@@ -167,8 +177,13 @@ class GuiManager:
         self.button_frame.pack_propagate(False)
     
     def place_widgets(self):
-        self.selected_file_name_listbox.pack(side=tk.TOP, fill=tk.BOTH, expand=True)
-        self.file_listbox.pack(side=tk.TOP, fill=tk.BOTH, expand=True)
+        # 리스트박스 배치
+        self.selected_file_name_listbox.pack(side=tk.LEFT, fill=tk.BOTH, expand=True)
+        self.file_listbox.pack(side=tk.LEFT, fill=tk.BOTH, expand=True)
+        
+        #스크롤바 배치
+        self.selected_file_name_scrollbar.pack(side=tk.RIGHT, fill=tk.Y)
+        self.file_listbox_scrollbar.pack(side=tk.RIGHT, fill=tk.Y)
         
         # 레이블 배치
         self.input_path_label.pack(side=tk.TOP, fill=tk.X, expand=False, padx=15)
