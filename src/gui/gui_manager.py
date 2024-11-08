@@ -6,9 +6,9 @@ import util.init_path as path_manager
 from gui.button_manager import ButtonManager
 from gui.listbox_manager import ListboxManager
 from gui.label_manager import LabelManager
+from converter.video_grapper import VideoGrapper
 from constants.config_constants import OUTPUT_PATH,TARGET_PATH
 from constants.gui_constants import WINDOW_TITLE, WINDOW_SIZE
-from constants.path_constants import DEFAULT_PATH
 
 class GuiManager:
     def __init__(self):
@@ -42,6 +42,8 @@ class GuiManager:
             update_output_path_label() = gui의 output_path_label에 출력 경로를 설정하는 메서드
         """
         self.label_manager = LabelManager(self)
+        
+        self.video_grapper = VideoGrapper(self)
         
         # 메인 프레임 생성 (모든 화면이 공유)
         self.main_frame = tk.Frame(self.root)
@@ -134,7 +136,7 @@ class GuiManager:
         self.execute_button = tk.Button(
             button_frame, 
             text="실행",
-            #command=self.button_manager.execute_file_conversion
+            command=self.video_grapper.get_video_list
         )
         # 레이블 추가
         self.input_path_label = tk.Label(
