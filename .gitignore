@@ -5,3 +5,4 @@
 */*/__pycache__/
 *.pyc
 src/config.json
+input.txt
