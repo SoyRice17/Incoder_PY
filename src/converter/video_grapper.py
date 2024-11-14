@@ -1,5 +1,4 @@
 import os
-import gui.gui_manager as gui_manager
 import util.io_manager as io
 
 class VideoGrapper:
