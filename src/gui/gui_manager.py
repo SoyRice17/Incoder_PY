@@ -100,6 +100,14 @@ class GuiManager:
         )
     
     def create_widgets(self):
+        #로그 출력 Text 위젯 추가
+        self.log_text = tk.Text(
+            self.bottom_top_frame, 
+            height=10, 
+            state='disabled',
+            font=('Helvetica', 10)
+        )
+        
         #스크롤바 생성
         self.selected_file_name_scrollbar = tk.Scrollbar(self.top_right_frame)
         self.file_listbox_scrollbar = tk.Scrollbar(self.top_left_frame)
@@ -174,6 +182,9 @@ class GuiManager:
         self.button_frame.pack_propagate(False)
     
     def place_widgets(self):
+        # 로그 출력 Text 위젯 배치
+        self.log_text.pack(side=tk.TOP, fill=tk.BOTH, expand=True)
+        
         # 리스트박스 배치
         self.selected_file_name_listbox.pack(side=tk.LEFT, fill=tk.BOTH, expand=True)
         self.file_listbox.pack(side=tk.LEFT, fill=tk.BOTH, expand=True)
