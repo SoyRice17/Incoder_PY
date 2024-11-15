@@ -1,16 +1,18 @@
 import os
 import ffmpeg
 import util.init_path as path
+import util.log_io_manager as io
 import converter.video_grapper as video_grapper
 
 
 class VideoEncoder:
     def __init__(self, gui_instance):
+        self.io = io.LogIOManager(gui_instance)
         self.path_instance = path.InitPath()
         self.input_path = self.path_instance.get_path("target_path")
         self.output_path = self.path_instance.get_path("output_path")
-        self.video_grapper_instance = video_grapper.VideoGrapper(gui_instance)
-        self.video_file_list = self.video_grapper_instance.get_video_list()
+        self.video_grapper = video_grapper.VideoGrapper(gui_instance)
+        self.video_file_list = self.video_grapper.get_video_list()
     
     def encode(self):
         # video_file_list가 dictionary 형태이므로 각 키워드별로 처리
@@ -34,19 +36,19 @@ class VideoEncoder:
                 stream = ffmpeg.output(stream, output_file, c='copy')
                 
                 # 디버그용 명령어 출력
-                print(f"Processing {keyword} videos...")
-                print(f"FFmpeg command: {' '.join(ffmpeg.compile(stream))}")
+                self.io.log(f"== 비디오 병합 시작 == \n 키워드 : {keyword}")
+                self.io.log(f"FFmpeg command: {' '.join(ffmpeg.compile(stream))}")
                 
                 # 실행
                 ffmpeg.run(stream, capture_stdout=True, capture_stderr=True)
-                print(f"Successfully combined videos for keyword: {keyword}")
+                self.io.log(f"== 비디오 병합 완료 == \n 키워드 : {keyword}")
                 
             except ffmpeg.Error as e:
-                print(f"FFmpeg error occurred for {keyword}: {str(e)}")
+                self.io.log(f"== 비디오 병합 에러 == \n 키워드 : {keyword} \n 에러 : {str(e)}")
                 # 여기에 에러 처리 로직 추가 가능
                 
             except Exception as e:
-                print(f"Unexpected error occurred for {keyword}: {str(e)}")
+                self.io.log(f"== 비디오 병합 예외 == \n 키워드 : {keyword} \n 에러 : {str(e)}")
                 
             finally:
                 # 임시 파일 삭제

@@ -1,12 +1,12 @@
 import os
-import util.io_manager as io
+import util.log_io_manager as io
 
 class VideoGrapper:
     def __init__(self,gui_instance):
         self.path_instance = gui_instance.path_instance
         self.gui_instance = gui_instance
         self.target_path = self.path_instance.get_path("target_path")
-        self.io = io.IOManager(self.gui_instance)
+        self.io = io.LogIOManager(self.gui_instance)
         
     def get_video_list(self) -> dict[str, list[str]]:
         self.io.log("\n=== 비디오 파일 검색 시작 ===")
@@ -36,6 +36,7 @@ class VideoGrapper:
                 self.io.log(f"  - {os.path.basename(video)}")
         
         self.io.log("\n=== 비디오 파일 검색 완료 ===")
+        self.io.log(str(video_groups))
         return video_groups
         
         

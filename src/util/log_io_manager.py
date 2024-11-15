@@ -1,6 +1,7 @@
-import gui.gui_manager as gui_manager
+
 import tkinter as tk
-class IOManager:
+
+class LogIOManager:
     def __init__(self, gui_instance):
         self.gui_instance = gui_instance
         self.log_text = gui_instance.log_text
