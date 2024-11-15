@@ -4,7 +4,7 @@ import tkinter as tk
 class LogIOManager:
     def __init__(self, gui_instance):
         self.gui_instance = gui_instance
-        self.log_text = gui_instance.log_text
+        self.log_text = self.gui_instance.log_text
         
     def log(self, message: str) -> None:
         self.log_text.config(state='normal')

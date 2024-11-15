@@ -3,6 +3,7 @@ import tkinter as tk
 
 # 로컬 모듈
 import util.init_path as path_manager
+import util.json_io_manager as json_manager
 from gui.button_manager import ButtonManager
 from gui.listbox_manager import ListboxManager
 from gui.label_manager import LabelManager
@@ -12,6 +13,7 @@ from constants.gui_constants import WINDOW_TITLE, WINDOW_SIZE
 
 class GuiManager:
     def __init__(self):
+        self.json_io_manager = json_manager.JsonIOManager()
         self.root = tk.Tk()
         self.root.title(WINDOW_TITLE) # 프로그램 제목
         self.root.geometry(WINDOW_SIZE)# 프로그램 창설정

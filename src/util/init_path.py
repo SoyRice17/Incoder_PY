@@ -1,10 +1,12 @@
 import json
 import os
+import util.json_io_manager as json_manager
 from constants.config_constants import CONFIG_FILE, FILE_PATH, TARGET_PATH
 
 
 class InitPath:
     def __init__(self):
+        self.json_manager = json_manager.JsonIOManager()
         """ __file__:
             현재 파일: /Users/.../shanaMacro/src/util/init_path.py
             ↓ dirname 한 번
@@ -13,7 +15,7 @@ class InitPath:
             /Users/.../shanaMacro/src
             ↓ config.json 결합
             /Users/.../shanaMacro/src/config.json"""
-        self.config_path = os.path.join(os.path.dirname(os.path.dirname(__file__)), CONFIG_FILE)
+        self.config_path = self.json_manager.config_path
     
     def isNonePath(self, path_name: str) -> bool:
         #target_path의 value가 없는지 확인

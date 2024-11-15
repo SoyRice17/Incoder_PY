@@ -4,5 +4,6 @@
 .DS_Store
 */*/__pycache__/
 *.pyc
-src/config.json
+src/jsons/*.json
+
 input.txt
