@@ -2,7 +2,7 @@
 import tkinter as tk
 
 # 로컬 모듈
-import util.init_path as path_manager
+import util.json_io_manager as path_manager
 import util.json_io_manager as json_manager
 from gui.button_manager import ButtonManager
 from gui.listbox_manager import ListboxManager
@@ -24,7 +24,7 @@ class GuiManager:
             savePath(path_name,path_value) = path_name의 키를 찾고 해당 키에 path_value의 값을 추가
             getPath(path_name) = path_name의 값을 리턴
         """
-        self.path_instance = path_manager.InitPath()
+        self.path_instance = path_manager.JsonIOManager()
         """ Note
             ButtonManager모듈 인스턴스 생성
             refresh_file_list() = 파일 목록을 새로고침하는 메서드
