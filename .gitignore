@@ -4,6 +4,7 @@
 .DS_Store
 */*/__pycache__/
 *.pyc
+*.txt
 src/jsons/*.json
 
 input.txt

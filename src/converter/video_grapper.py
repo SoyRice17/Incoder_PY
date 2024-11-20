@@ -1,12 +1,12 @@
 import os
 import util.log_io_manager as io
+import util.json_io_manager as json_io
 
 class VideoGrapper:
     def __init__(self,gui_instance):
-        self.path_instance = gui_instance.path_instance
         self.gui_instance = gui_instance
-        self.target_path = self.path_instance.get_path("target_path")
-        self.io = io.LogIOManager(self.gui_instance)
+        self.target_path = json_io.JsonIOManager().get_path("target_path")
+        self.io = io.LogIOManager()
         
     def get_video_list(self) -> dict[str, list[str]]:
         self.io.log("\n=== 비디오 파일 검색 시작 ===")

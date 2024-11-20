@@ -4,6 +4,7 @@ import tkinter as tk
 # 로컬 모듈
 import util.json_io_manager as path_manager
 import util.json_io_manager as json_manager
+import util.log_io_manager as io
 from gui.button_manager import ButtonManager
 from gui.listbox_manager import ListboxManager
 from gui.label_manager import LabelManager
@@ -14,6 +15,7 @@ from constants.gui_constants import WINDOW_TITLE, WINDOW_SIZE
 class GuiManager:
     def __init__(self):
         self.json_io_manager = json_manager.JsonIOManager()
+        self.io = io.LogIOManager()
         self.root = tk.Tk()
         self.root.title(WINDOW_TITLE) # 프로그램 제목
         self.root.geometry(WINDOW_SIZE)# 프로그램 창설정
@@ -228,6 +230,10 @@ class GuiManager:
         
         # execute_button에 직접 메서드 연결
         self.execute_button.config(command=self.execute_video_encoding)
+        
+        # io 초기화
+        self.io.initialize_gui(self.log_text, self.root)
+        self.io.switch_to_gui()
 
     def execute_video_encoding(self):
         # 실행 버튼을 누를 때마다 새로운 VideoEncoder 인스턴스 생성

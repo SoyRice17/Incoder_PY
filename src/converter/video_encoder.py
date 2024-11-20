@@ -7,7 +7,7 @@ import converter.video_grapper as video_grapper
 
 class VideoEncoder:
     def __init__(self, gui_instance):
-        self.io = io.LogIOManager(gui_instance)
+        self.io = io.LogIOManager()
         self.path_instance = path.JsonIOManager()
         self.input_path = self.path_instance.get_path("target_path")
         self.output_path = self.path_instance.get_path("output_path")
