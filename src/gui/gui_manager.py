@@ -21,7 +21,7 @@ class GuiManager:
         self.root.geometry(WINDOW_SIZE)# 프로그램 창설정
         
         """ Note
-            InitPATH모듈 인스턴스 생성
+            JsonIOManager모듈 인스턴스 생성
             isNonePath() = config.json의 key인 target_path의 값이 있는지 확인
             savePath(path_name,path_value) = path_name의 키를 찾고 해당 키에 path_value의 값을 추가
             getPath(path_name) = path_name의 값을 리턴

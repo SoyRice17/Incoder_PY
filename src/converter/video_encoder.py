@@ -3,16 +3,18 @@ import ffmpeg
 import util.json_io_manager as path
 import util.log_io_manager as io
 import converter.video_grapper as video_grapper
+from constants.config_constants import FILE_PATH
 
 
 class VideoEncoder:
     def __init__(self, gui_instance):
         self.io = io.LogIOManager()
         self.path_instance = path.JsonIOManager()
-        self.input_path = self.path_instance.get_path("target_path")
-        self.output_path = self.path_instance.get_path("output_path")
+        self.input_path = self.path_instance.get_path(FILE_PATH,"target_path")
+        self.output_path = self.path_instance.get_path(FILE_PATH,"output_path")
         self.video_grapper = video_grapper.VideoGrapper(gui_instance)
-        self.video_file_list = self.video_grapper.get_video_list()
+        self.video_file_list = self.path_instance.get_path("video_groups")
+
     
     def encode(self):
         # video_file_list가 dictionary 형태이므로 각 키워드별로 처리

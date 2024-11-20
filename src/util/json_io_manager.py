@@ -1,6 +1,7 @@
 import json
 import os 
 import util.log_io_manager as io
+from typing import Optional
 from constants.config_constants import FILE_PATH
 
 class JsonIOManager:
@@ -68,20 +69,48 @@ class JsonIOManager:
                 json.dump(data, f, ensure_ascii=False, indent=2) # ensure_ascii=False : 한글 깨짐 방지, indent=2 : 들여쓰기 2칸
         except Exception as e:
             self.io.log(f"파일을 쓰는 중 오류가 발생했습니다: {e}")
+            
+    def update_json(self, file_path: str, data: dict) -> None:
+        try:
+            existing_data = self.read_json(file_path)
+            existing_data.update(data)
+            self.write_json(file_path, existing_data)
+            self.io.log(f"파일 업데이트 완료: {file_path}")
+            
+        except Exception as e:
+            self.io.log(f"파일을 업데이트하는 중 오류가 발생했습니다: {e}")
+            
 
     def save_path(self, path_name: str, path_value: str) -> None:
-        # 파일 경로를 config.json에 저장
-        with open(self.config_path, 'r+') as f:
-            config = json.load(f)
+        """파일 경로를 config.json에 저장 (업데이트 방식)"""
+        try:
+            # 1. 파일 읽기 ('r+' 모드로 읽기+쓰기)
+            with open(self.config_path, 'r+') as f:
+                config = json.load(f)
+            
+            # 2. 특정 경로 값만 업데이트
             config[FILE_PATH][path_name] = path_value
+            
+            # 3. 파일 포인터를 처음으로 이동
+            f.seek(0)
+            
+            # 4. 기존 내용 삭제
+            f.truncate()
+            
+            # 5. 업데이트된 내용 쓰기
+            json.dump(config, f, indent=2)
+            
+            self.io.log(f"경로 업데이트 완료: {path_name} = {path_value}")
+            
+        except Exception as e:
+            self.io.log(f"경로 저장 중 오류 발생: {e}")
 
-            f.seek(0)  # 파일 포인터를 파일의 처음으로 이동
-            f.truncate()  # 파일의 나머지 부분을 삭제
-            json.dump(config, f, indent=2)  # 딕셔너리를 파일에 쓰기
-
-    def get_path(self, path_name: str) -> str:
+    def get_path(self, target_path: str, path_name: Optional[str] = None) -> str:
         """저장된 파일 경로 가져오기"""
         with open(self.config_path, 'r') as f:
             config = json.load(f)
 
-        return config[FILE_PATH].get(path_name)
+        if path_name is None:
+            return config.get(target_path)
+        else:
+            return config[target_path].get(path_name)
