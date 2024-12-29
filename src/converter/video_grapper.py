@@ -1,14 +1,13 @@
 import os
-import util.log_io_manager as io
-import util.json_io_manager as json_io
+import util
 from constants.config_constants import FILE_PATH
 
 class VideoGrapper:
     def __init__(self,gui_instance):
         self.gui_instance = gui_instance
-        self.json_io = json_io.JsonIOManager()
+        self.json_io = util.JsonIOManager()
         self.target_path = self.json_io.get_path(FILE_PATH,"target_path")
-        self.io = io.LogIOManager()
+        self.io = util.LogIOManager()
         self.keyword_list = []
         
     def get_video_list(self, input_keyword: str) -> dict[str, list[str]]:

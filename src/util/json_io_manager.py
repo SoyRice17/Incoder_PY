@@ -1,12 +1,12 @@
 import json
 import os 
-import util.log_io_manager as io
+import util 
 from typing import Optional
 from constants.config_constants import FILE_PATH
 
 class JsonIOManager:
     def __init__(self):
-        self.io = io.LogIOManager()
+        self.io = util.LogIOManager()
         self.base_path = os.path.join(os.path.dirname(os.path.dirname(__file__)))
         self.jsons_path = os.path.join(self.base_path, "jsons")
         self.config_path = os.path.join(self.jsons_path, "config.json")
@@ -44,7 +44,7 @@ class JsonIOManager:
                 'r+': read and write (읽기와 쓰기)
             as f: 열린 파일 객체를 f라는 변수에 저장해
         """
-        with open(self.config_path, 'r') as f:
+        with open(self.config_path, 'r', encoding="utf-8") as f:
             config = json.load(f) # 딕셔너리 형태로 파일 읽기
         #target_path의 value가 없는지 확인
         if config[FILE_PATH].get(path_name) == "":
@@ -107,7 +107,7 @@ class JsonIOManager:
 
     def get_path(self, target_path: str, path_name: Optional[str] = None) -> str:
         """저장된 파일 경로 가져오기"""
-        with open(self.config_path, 'r') as f:
+        with open(self.config_path, 'r', encoding="utf-8") as f:
             config = json.load(f)
 
         if path_name is None:

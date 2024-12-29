@@ -2,20 +2,18 @@
 import tkinter as tk
 
 # 로컬 모듈
-import util.json_io_manager as path_manager
-import util.json_io_manager as json_manager
-import util.log_io_manager as io
+import util
 from gui.button_manager import ButtonManager
 from gui.listbox_manager import ListboxManager
 from gui.label_manager import LabelManager
-from converter.video_encoder import VideoEncoder
+from converter import VideoEncoder
 from constants.config_constants import OUTPUT_PATH,TARGET_PATH
 from constants.gui_constants import WINDOW_TITLE, WINDOW_SIZE
 
 class GuiManager:
     def __init__(self):
-        self.json_io_manager = json_manager.JsonIOManager()
-        self.io = io.LogIOManager()
+        self.json_io_manager = util.JsonIOManager()
+        self.io = util.LogIOManager()
         self.root = tk.Tk()
         self.root.title(WINDOW_TITLE) # 프로그램 제목
         self.root.geometry(WINDOW_SIZE)# 프로그램 창설정
@@ -26,7 +24,7 @@ class GuiManager:
             savePath(path_name,path_value) = path_name의 키를 찾고 해당 키에 path_value의 값을 추가
             getPath(path_name) = path_name의 값을 리턴
         """
-        self.path_instance = path_manager.JsonIOManager()
+        self.path_instance = util.JsonIOManager()
         """ Note
             ButtonManager모듈 인스턴스 생성
             refresh_file_list() = 파일 목록을 새로고침하는 메서드

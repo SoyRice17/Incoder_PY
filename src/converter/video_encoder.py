@@ -1,15 +1,14 @@
 import os
 import ffmpeg
-import util.json_io_manager as path
-import util.log_io_manager as io
+import util
 import converter.video_grapper as video_grapper
 from constants.config_constants import FILE_PATH
 
 
 class VideoEncoder:
     def __init__(self, gui_instance):
-        self.io = io.LogIOManager()
-        self.path_instance = path.JsonIOManager()
+        self.io = util.LogIOManager()
+        self.path_instance = util.JsonIOManager()
         self.input_path = self.path_instance.get_path(FILE_PATH,"target_path")
         self.output_path = self.path_instance.get_path(FILE_PATH,"output_path")
         self.video_grapper = video_grapper.VideoGrapper(gui_instance)
