@@ -8,3 +8,7 @@
 src/jsons/*.json
 
 input.txt
+tests/*
+setup.py
+encoder_P.egg-info/*
+.vscode/*

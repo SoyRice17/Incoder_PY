@@ -103,7 +103,7 @@ class GuiManager:
         self.progress.pack(expand=True)
     
         self.loading_screen_active = True
-        
+    
     def update_loading_progress(self, value, text):
         self.progress['value'] = value
         self.loading_label['text'] = text
@@ -314,8 +314,7 @@ class GuiManager:
         except Exception as e:
             self.io.log(f"초기화 오류: {e}")
             tk.messagebox.showerror("초기화 오류", f"초기화 중 오류가 발생했습니다: {e}")
-            
-        
+    
     def show_main_screen(self):
         """메인 화면을 표시
         
@@ -331,7 +330,7 @@ class GuiManager:
             self.progress.destroy()
         self.place_frames()
         self.place_widgets()
-        
+    
     def execute_video_encoding(self):
         """비디오 인코딩 실행
         
