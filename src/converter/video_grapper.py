@@ -1,5 +1,6 @@
 import os
 import util
+from typing import Optional
 from constants.config_constants import FILE_PATH
 
 class VideoGrapper:
@@ -8,15 +9,22 @@ class VideoGrapper:
         self.json_io = util.JsonIOManager()
         self.target_path = self.json_io.get_path(FILE_PATH,"target_path")
         self.io = util.LogIOManager()
-        self.keyword_list = []
+        self.keyword_list = self.json_io.get_path("repeat_title","keywords")
+        if self.keyword_list == [] or self.keyword_list == None:
+            self.keyword_list = []
         
-    def get_video_list(self, input_keyword: str) -> dict[str, list[str]]:
+    def get_video_list(self, input_keyword: Optional[str] = None) -> dict[str, list[str]]:
         self.io.log("\n=== 비디오 파일 검색 시작 ===")
         
-        # 키워드 목록 가져오기
-        self.keyword_list.append(input_keyword)
-        self.io.log(f"검색할 키워드 목록: {self.keyword_list}")
+        if (self.keyword_list == [] or self.keyword_list == None) and input_keyword == None:
+            self.io.log("키워드가 없습니다.")
+            return {}
         
+        if input_keyword:
+            # 키워드 목록 가져오기
+            self.keyword_list.append(input_keyword)
+            self.io.log(f"검색할 키워드 목록: {self.keyword_list}")
+            
         # 키워드별 그룹 초기화
         video_groups = {keyword: [] for keyword in self.keyword_list}
         
@@ -39,7 +47,7 @@ class VideoGrapper:
         self.io.log("\n=== 비디오 파일 검색 완료 ===")
         self.io.log(str(video_groups))
         
-        self.json_io.update_json(self.json_io.config_path, {"video_groups": video_groups})
+        self.json_io.update_json(self.json_io.config_path, {"repeat_title": {"keywords": list(video_groups.keys())}})
         return video_groups
         
         

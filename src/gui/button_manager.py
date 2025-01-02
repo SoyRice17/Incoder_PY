@@ -28,9 +28,14 @@ class ButtonManager:
         
     
     def add_video_list(self, video_list: dict[str, list[str]]) -> None:
+        self.gui_instance.selected_file_name_listbox.delete(0, 'end')
         for keyword, videos in video_list.items():
-            for video in videos:
-                self.gui_instance.selected_file_name_listbox.insert('end', f"{keyword} - {video}")
+            if videos == [] or videos == None:
+                self.gui_instance.selected_file_name_listbox.insert('end', f"{keyword}")
+            elif videos:
+                self.gui_instance.selected_file_name_listbox.insert('end', keyword)
+                for video in videos:
+                    self.gui_instance.selected_file_name_listbox.insert('end', f"    ㄴ {video}")
         
     def delete_selected_file_listbox(self) -> None:
         delete_name = self.gui_instance.input_file_name_entry.get()

@@ -6,7 +6,7 @@ import util
 from gui.button_manager import ButtonManager
 from gui.listbox_manager import ListboxManager
 from gui.label_manager import LabelManager
-from converter import VideoEncoder
+from converter import VideoEncoder,VideoGrapper
 from constants.config_constants import OUTPUT_PATH,TARGET_PATH
 from constants.gui_constants import WINDOW_TITLE, WINDOW_SIZE
 
@@ -31,6 +31,7 @@ class GuiManager:
         
         모든 필요한 매니저 객체들을 생성하고 기본 GUI 설정을 수행합니다.
         """
+        self.video_grapper = VideoGrapper(self)
         self.json_io_manager = util.JsonIOManager()
         self.io = util.LogIOManager()
         self.root = tk.Tk()
@@ -330,6 +331,7 @@ class GuiManager:
             self.progress.destroy()
         self.place_frames()
         self.place_widgets()
+        self.button_manager.add_video_list(self.video_grapper.get_video_list())
     
     def execute_video_encoding(self):
         """비디오 인코딩 실행

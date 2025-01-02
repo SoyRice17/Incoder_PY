@@ -12,12 +12,12 @@ class VideoEncoder:
         self.input_path = self.path_instance.get_path(FILE_PATH,"target_path")
         self.output_path = self.path_instance.get_path(FILE_PATH,"output_path")
         self.video_grapper = video_grapper.VideoGrapper(gui_instance)
-        self.video_file_list = self.path_instance.get_path("video_groups")
+        self.video_groups = self.video_grapper.get_video_list()
 
     
     def encode(self):
         # video_file_list가 dictionary 형태이므로 각 키워드별로 처리
-        for keyword, videos in self.video_file_list.items():
+        for keyword, videos in self.video_groups.items():
             if not videos:  # 비디오 목록이 비어있으면 스킵
                 continue
                 
