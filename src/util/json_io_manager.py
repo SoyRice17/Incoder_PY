@@ -88,17 +88,17 @@ class JsonIOManager:
             with open(self.config_path, 'r+') as f:
                 config = json.load(f)
             
-            # 2. 특정 경로 값만 업데이트
-            config[FILE_PATH][path_name] = path_value
-            
-            # 3. 파일 포인터를 처음으로 이동
-            f.seek(0)
-            
-            # 4. 기존 내용 삭제
-            f.truncate()
-            
-            # 5. 업데이트된 내용 쓰기
-            json.dump(config, f, indent=2)
+                # 2. 특정 경로 값만 업데이트
+                config[FILE_PATH][path_name] = path_value
+                
+                # 3. 파일 포인터를 처음으로 이동
+                f.seek(0)
+                
+                # 4. 기존 내용 삭제
+                f.truncate()
+                
+                # 5. 업데이트된 내용 쓰기
+                json.dump(config, f, indent=2)
             
             self.io.log(f"경로 업데이트 완료: {path_name} = {path_value}")
             
