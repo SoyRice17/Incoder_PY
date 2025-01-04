@@ -114,3 +114,15 @@ class JsonIOManager:
             return config.get(target_path)
         else:
             return config[target_path].get(path_name)
+    
+    def remove_keyword(self, keyword: str) -> None:
+        try:
+            with open(self.config_path, 'r', encoding="utf-8") as f:
+                config = json.load(f)
+            config["repeat_title"]["keywords"].remove(keyword)
+            with open(self.config_path, 'w', encoding="utf-8") as f:
+                json.dump(config, f, indent=2)
+            self.io.log(f"{keyword} 키워드가 삭제되었습니다.")
+        except Exception as e:
+            self.io.log(f"키워드 삭제 중 오류가 발생했습니다: {e}")
+
