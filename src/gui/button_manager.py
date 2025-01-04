@@ -42,19 +42,23 @@ class ButtonManager:
                     self.gui_instance.selected_file_name_listbox.insert('end', f"    ㄴ {video}")
         
     def delete_selected_file_listbox(self) -> None:
-        # 선택된 항목이 있는지 먼저 확인
-        selected_indices = self.gui_instance.selected_file_name_listbox.curselection()
-        if not selected_indices:  # 선택된 항목이 없으면
-            return
-        
-        delete_name = self.gui_instance.selected_file_name_listbox.get(selected_indices[0])
-        if not delete_name:
-            return
-        
-        if "ㄴ" not in delete_name:  # 문자열 내에 "ㄴ"이 포함되어 있는지 확인
-            self.gui_instance.selected_file_name_listbox.delete(selected_indices[0])
-            self.json.remove_keyword(delete_name)
-            self.add_video_list(self.video_grapper.get_video_list())
-        else:
-            self.logger.log(f"{delete_name} 경로는 삭제할 수 없습니다.")
+        try:
+            # 선택된 항목이 있는지 먼저 확인
+            selected_indices = self.gui_instance.selected_file_name_listbox.curselection()
+            if not selected_indices:  # 선택된 항목이 없으면
+                return
+            
+            delete_name = self.gui_instance.selected_file_name_listbox.get(selected_indices[0])
+            if not delete_name:
+                return
+            
+            if "ㄴ" not in delete_name:  # 문자열 내에 "ㄴ"이 포함되어 있는지 확인
+                self.gui_instance.selected_file_name_listbox.delete(selected_indices[0])
+                self.json.remove_keyword(delete_name)
+                self.button.add_video_list(self.grapper.get_video_list())
+            else:
+                self.logger.log(f"{delete_name} 경로는 삭제할 수 없습니다.")
+        except Exception as e:
+            self.logger.log(f"삭제 중 오류가 발생했습니다: {e}")
+
         
