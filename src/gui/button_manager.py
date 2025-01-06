@@ -1,19 +1,19 @@
 import os
-import converter.video_grapper as video_grapper
-from util import JsonIOManager
 from util import LogIOManager
 from constants.config_constants import TARGET_PATH, FILE_PATH
+from converter.video_grapper import VideoGrapper
+from util.config_manager import ConfigManager
 
 class ButtonManager:
     def __init__(self, gui_instance):
         self.gui_instance = gui_instance
         self.path_instance = self.gui_instance.path_instance
-        self.json = JsonIOManager()
         self.logger = LogIOManager()
-        self.video_grapper = video_grapper.VideoGrapper(gui_instance)
-        
+        self.video_grapper = VideoGrapper(gui_instance)
+        self.config_manager = ConfigManager()
+    
     def refresh_file_list(self) -> None:
-        target_path = self.path_instance.get_path(FILE_PATH,TARGET_PATH)
+        target_path = self.path_instance.get_path(FILE_PATH, TARGET_PATH)
         if not target_path:
             return
         file_list = [f for f in os.listdir(target_path) if os.path.isfile(os.path.join(target_path, f))]
@@ -29,36 +29,41 @@ class ButtonManager:
             return
         self.add_video_list(self.video_grapper.get_video_list(input_name))
         self.gui_instance.input_file_name_entry.delete(0, 'end')
-        
     
     def add_video_list(self, video_list: dict[str, list[str]]) -> None:
         self.gui_instance.selected_file_name_listbox.delete(0, 'end')
         for keyword, videos in video_list.items():
-            if videos == [] or videos == None:
+            if not videos:
                 self.gui_instance.selected_file_name_listbox.insert('end', f"{keyword}")
-            elif videos:
+            else:
                 self.gui_instance.selected_file_name_listbox.insert('end', keyword)
                 for video in videos:
                     self.gui_instance.selected_file_name_listbox.insert('end', f"    ㄴ {video}")
         
     def delete_selected_file_listbox(self) -> None:
         try:
-            # 선택된 항목이 있는지 먼저 확인
-            selected_indices = self.gui_instance.selected_file_name_listbox.curselection()
-            if not selected_indices:  # 선택된 항목이 없으면
-                return
-            
-            delete_name = self.gui_instance.selected_file_name_listbox.get(selected_indices[0])
+            # 엔트리에서 입력값 가져오기
+            delete_name = self.gui_instance.input_file_name_entry.get().strip()
             if not delete_name:
                 return
             
-            if "ㄴ" not in delete_name:  # 문자열 내에 "ㄴ"이 포함되어 있는지 확인
-                self.gui_instance.selected_file_name_listbox.delete(selected_indices[0])
-                self.json.remove_keyword(delete_name)
-                self.button.add_video_list(self.grapper.get_video_list())
-            else:
-                self.logger.log(f"{delete_name} 경로는 삭제할 수 없습니다.")
+            # 리스트박스의 모든 항목을 순회하면서 일치하는 항목 찾기
+            items = self.gui_instance.selected_file_name_listbox.get(0, 'end')
+            for idx, item in enumerate(items):
+                if item == delete_name and "ㄴ" not in item:
+                    self.gui_instance.selected_file_name_listbox.delete(idx)
+                    # ConfigManager 사용
+                    keywords = self.config_manager.config.get("repeat_title", {}).get("keywords", [])
+                    if delete_name in keywords:
+                        keywords.remove(delete_name)
+                        self.config_manager.config["repeat_title"] = {"keywords": keywords}
+                        self.config_manager.save_config()
+                    self.add_video_list(self.video_grapper.get_video_list())
+                    self.gui_instance.input_file_name_entry.delete(0, 'end')  # 엔트리 초기화
+                    return
+                    
+            self.logger.log(f"'{delete_name}' 항목을 찾을 수 없습니다.")
+            
         except Exception as e:
             self.logger.log(f"삭제 중 오류가 발생했습니다: {e}")
-
         

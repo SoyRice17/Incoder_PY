@@ -1,8 +1,18 @@
+from util import ConfigManager
 import gui.gui_manager as gui
 
+def init_app():
+    """애플리케이션 초기화 및 실행"""
+    try:
+        app = gui.GuiManager()
+        app.run()
+    except Exception as e:
+        print(f"애플리케이션 실행 중 오류 발생: {e}")
+    finally:
+        ConfigManager().save_config()
 
 if __name__ == "__main__":
-    gui.GuiManager().run()
+    init_app()
 
 
 ### todo
@@ -14,6 +24,7 @@ if __name__ == "__main__":
 # 먼저 video_groups 항목을 제거
 # repeat_title 항목 활용/ 저장, 로드를 통해 타겟 키워드를 설정
 ## 영상 화질 프레임 등 영상 관련 옵션 추가
+### 해결 ^____^
 
 ## GUI 레이아웃 개선사항
 # 메인 윈도우 크기 조절 가능하도록 수정

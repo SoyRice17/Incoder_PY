@@ -2,26 +2,28 @@ import os
 import util
 from typing import Optional
 from constants.config_constants import FILE_PATH
+from util.config_manager import ConfigManager
 
 class VideoGrapper:
-    def __init__(self,gui_instance):
+    def __init__(self, gui_instance):
         self.gui_instance = gui_instance
-        self.json_io = util.JsonIOManager()
-        self.target_path = self.json_io.get_path(FILE_PATH,"target_path")
         self.io = util.LogIOManager()
-        self.keyword_list = self.json_io.get_path("repeat_title","keywords")
-        if self.keyword_list == [] or self.keyword_list == None:
+        self.config_manager = ConfigManager()
+        
+        # config에서 데이터 가져오기
+        self.target_path = self.config_manager.config.get(FILE_PATH, {}).get("target_path", "")
+        self.keyword_list = self.config_manager.config.get("repeat_title", {}).get("keywords", [])
+        if not self.keyword_list:
             self.keyword_list = []
         
     def get_video_list(self, input_keyword: Optional[str] = None) -> dict[str, list[str]]:
         self.io.log("\n=== 비디오 파일 검색 시작 ===")
         
-        if (self.keyword_list == [] or self.keyword_list == None) and input_keyword == None:
+        if (not self.keyword_list) and input_keyword is None:
             self.io.log("키워드가 없습니다.")
             return {}
         
-        if input_keyword:
-            # 키워드 목록 가져오기
+        if input_keyword and input_keyword not in self.keyword_list:
             self.keyword_list.append(input_keyword)
             self.io.log(f"검색할 키워드 목록: {self.keyword_list}")
             
@@ -29,6 +31,10 @@ class VideoGrapper:
         video_groups = {keyword: [] for keyword in self.keyword_list}
         
         # 파일 검색
+        if not self.target_path:
+            self.io.log("대상 경로가 설정되지 않았습니다.")
+            return {}
+            
         self.io.log(f"\n대상 경로: {self.target_path}")
         for filename in os.listdir(self.target_path):
             for keyword in self.keyword_list:
@@ -41,13 +47,11 @@ class VideoGrapper:
         self.io.log("\n=== 검색 결과 ===")
         for keyword, videos in video_groups.items():
             self.io.log(f"키워드 '{keyword}': {len(videos)}개 파일 발견")
-            for video in videos:
-                self.io.log(f"  - {os.path.basename(video)}")
+            
+        # 설정 저장
+        self.config_manager.config["repeat_title"] = {"keywords": self.keyword_list}
+        self.config_manager.save_config()
         
-        self.io.log("\n=== 비디오 파일 검색 완료 ===")
-        self.io.log(str(video_groups))
-        
-        self.json_io.update_json(self.json_io.config_path, {"repeat_title": {"keywords": list(video_groups.keys())}})
         return video_groups
         
         

@@ -10,6 +10,7 @@ from converter import VideoEncoder,VideoGrapper
 from constants.config_constants import OUTPUT_PATH,TARGET_PATH
 from constants.gui_constants import WINDOW_TITLE, WINDOW_SIZE
 
+
 class GuiManager:
     """GUI 애플리케이션의 메인 매니저 클래스
     
@@ -31,48 +32,30 @@ class GuiManager:
         
         모든 필요한 매니저 객체들을 생성하고 기본 GUI 설정을 수행합니다.
         """
-        self.video_grapper = VideoGrapper(self)
-        self.json_io_manager = util.JsonIOManager()
-        self.io = util.LogIOManager()
-        self.root = tk.Tk()
-        self.root.title(WINDOW_TITLE) # 프로그램 제목
-        self.root.geometry(WINDOW_SIZE)# 프로그램 창설정
-        
-        """ Note
-            JsonIOManager모듈 인스턴스 생성
-            isNonePath() = config.json의 key인 target_path의 값이 있는지 확인
-            savePath(path_name,path_value) = path_name의 키를 찾고 해당 키에 path_value의 값을 추가
-            getPath(path_name) = path_name의 값을 리턴
-        """
+        # JsonIOManager 먼저 초기화
         self.path_instance = util.JsonIOManager()
-        """ Note
-            ButtonManager모듈 인스턴스 생성
-            refresh_file_list() = 파일 목록을 새로고침하는 메서드
-            confirm_selcetion() = gui의 input_file_name_entry에 입력된 파일을 선택한 selected_file_name_listbox에 추가하는 메서드
-            delete_selected_file_listbox() = gui의 selected_file_name_listbox에서 선택한 파일을 selected_file_name_listbox에서 삭제하는 메서드
-        """
+        self.io = util.LogIOManager()
+        
+        # GUI 기본 설정
+        self.root = tk.Tk()
+        self.root.title(WINDOW_TITLE)
+        self.root.geometry(WINDOW_SIZE)
+        
+        # 매니저 객체들 초기화
         self.button_manager = ButtonManager(self)
-        """ Note
-            ListboxManager모듈 인스턴스 생성
-            delete_selected_file_name() = gui의 selected_file_name_listbox에서 더블클릭한 파일을 selected_file_name_listbox에서 삭제하는 메서드
-            insert_input_file_name_entry() = gui의 file_listbox에서 더블클릭한 파일을 gui의 input_file_name_entry에 추가하는 메서드
-        """
+        self.video_grapper = VideoGrapper(self)
+        # 나머지 매니저 초기화
         self.listbox_manager = ListboxManager(self)
-        """ Note
-            LabelManager모듈 인스턴스 생성
-            update_input_path_label() = gui의 input_path_label에 파일 경로를 설정하는 메서드
-            update_output_path_label() = gui의 output_path_label에 출력 경로를 설정하는 메서드
-        """
         self.label_manager = LabelManager(self)
         
-        # 메인 프레임 생성 (모든 화면이 공유)
+        # 메인 프레임 생성
         self.main_frame = tk.Frame(self.root)
         self.main_frame.pack(fill=tk.BOTH, expand=True)
         
         # 초기 화면 설정
         self.show_appropriate_screen()
         
-        self.loading_screen_active = False  # 로딩 화면 상태 추적용
+        self.loading_screen_active = False
     
     def show_appropriate_screen(self):
         """화면 전환을 관리하는 메서드
