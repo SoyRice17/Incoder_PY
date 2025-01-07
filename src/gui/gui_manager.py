@@ -316,6 +316,30 @@ class GuiManager:
         self.place_widgets()
         self.button_manager.add_video_list(self.video_grapper.get_video_list())
     
+    def show_encoding_progress(self):
+        """인코딩 진행 상황을 표시하는 창을 생성"""
+        self.encoding_window = tk.Toplevel(self.root)
+        self.encoding_window.title("인코딩 진행 중...")
+        self.encoding_window.geometry("300x150")
+        
+        self.encoding_label = tk.Label(self.encoding_window, text="인코딩 진행 중...", font=('Helvetica', 10))
+        self.encoding_label.pack(pady=10)
+        
+        self.encoding_progress = ttk.Progressbar(self.encoding_window, length=200, mode='determinate')
+        self.encoding_progress.pack(pady=10)
+
+    def update_encoding_progress(self, value, text):
+        """인코딩 진행 상황 업데이트"""
+        if hasattr(self, 'encoding_progress'):
+            self.encoding_progress['value'] = value
+            self.encoding_label['text'] = text
+            self.encoding_window.update()
+
+    def close_encoding_progress(self):
+        """인코딩 진행 창 닫기"""
+        if hasattr(self, 'encoding_window'):
+            self.encoding_window.destroy()
+    
     def execute_video_encoding(self):
         """비디오 인코딩 실행
         
