@@ -3,9 +3,7 @@ import tkinter as tk
 from tkinter import ttk
 # 로컬 모듈
 import util
-from gui.button_manager import ButtonManager
-from gui.listbox_manager import ListboxManager
-from gui.label_manager import LabelManager
+from gui import ButtonManager, EntryManager, ListboxManager, LabelManager
 from converter import VideoEncoder,VideoGrapper
 from constants.config_constants import OUTPUT_PATH,TARGET_PATH
 from constants.gui_constants import WINDOW_TITLE, WINDOW_SIZE
@@ -44,6 +42,7 @@ class GuiManager:
         # 매니저 객체들 초기화
         self.button_manager = ButtonManager(self)
         self.video_grapper = VideoGrapper(self)
+        self.entry_manager = EntryManager(self)
         # 나머지 매니저 초기화
         self.listbox_manager = ListboxManager(self)
         self.label_manager = LabelManager(self)
@@ -192,6 +191,11 @@ class GuiManager:
             self.button_frame, 
             text="실행"
         )
+        self.setting_button = tk.Button(
+            self.button_frame,
+            text="설정",
+            command=self.show_setting_screen
+        )
         # 레이블 추가
         self.input_path_label = tk.Label(
             self.bottom_top_frame,
@@ -202,6 +206,12 @@ class GuiManager:
         self.output_path_label = tk.Label(
             self.bottom_top_frame,
             text="출력 경로",
+            font=('Helvetica', 10),
+            anchor=tk.W
+        )
+        self.setting_value_label = tk.Label(
+            self.bottom_top_frame,
+            text="설정 값",
             font=('Helvetica', 10),
             anchor=tk.W
         )
@@ -246,6 +256,7 @@ class GuiManager:
         # 레이블 배치
         self.input_path_label.pack(side=tk.TOP, fill=tk.X, expand=False, padx=15)
         self.output_path_label.pack(side=tk.TOP, fill=tk.X, expand=False, padx=15)
+        self.setting_value_label.pack(side=tk.TOP, fill=tk.X, expand=False, padx=15)
         
         # 입력 필드와 버튼 배치
         self.input_file_name_entry.pack(side=tk.TOP, fill=tk.X, expand=True, pady=10)
@@ -253,6 +264,7 @@ class GuiManager:
         self.confirm_button.pack(side=tk.LEFT, fill=tk.X, expand=True, padx=15)
         self.delete_button.pack(side=tk.LEFT, fill=tk.X, expand=True, padx=15)
         self.execute_button.pack(side=tk.LEFT, fill=tk.X, expand=True, padx=15)
+        self.setting_button.pack(side=tk.LEFT, fill=tk.X, expand=True, padx=15)
     
     def initialize_main_screen(self):
         """메인 화면 초기화를 수행
@@ -285,7 +297,9 @@ class GuiManager:
                 self.label_manager.set_output_path_label()
             else:
                 self.label_manager.update_output_path_label()
-                
+            
+            self.label_manager.update_setting_value_label()
+            
             self.update_loading_progress(80, "파일 목록 로드 중...")
             # 파일 목록 새로고침
             self.button_manager.refresh_file_list()
@@ -340,6 +354,90 @@ class GuiManager:
         if hasattr(self, 'encoding_window'):
             self.encoding_window.destroy()
     
+    def show_setting_screen(self):
+        """설정 화면 출력"""
+        self.setting_window = tk.Toplevel(self.root)
+        self.setting_window.title("설정")
+        self.setting_window.geometry("250x550")
+        
+        self.codec_label = tk.Label(
+            self.setting_window, 
+            text="인코딩 코덱", 
+            font=('Helvetica', 10))
+        self.codec_label.pack(pady=10)
+        self.codec_combobox = ttk.Combobox(
+            self.setting_window, 
+            values=["H.264", "H.265", "AV1"])
+        self.codec_combobox.pack(pady=10)
+        
+        self.resolution_label = tk.Label(
+            self.setting_window, 
+            text="해상도", 
+            font=('Helvetica', 10))
+        self.resolution_label.pack(pady=10)
+        self.resolution_combobox = ttk.Combobox(
+            self.setting_window, 
+            values=["1920x1080", "1280x720", "640x480"])
+        self.resolution_combobox.pack(pady=10)
+        
+        self.crf_label = tk.Label(
+            self.setting_window, 
+            text="CRF", 
+            font=('Helvetica', 10))
+        self.crf_label.pack(pady=10)
+        self.crf_entry = tk.Entry(
+            self.setting_window, 
+            font=('Helvetica', 10),
+            width=30)
+        self.entry_manager.set_placeholder(self.crf_entry, f"0~51 사이의 값을 입력해주세요.")
+        self.crf_entry.pack(pady=10)
+        
+        self.frame_rate_label = tk.Label(
+            self.setting_window, 
+            text="프레임 레이트", 
+            font=('Helvetica', 10))
+        self.frame_rate_label.pack(pady=10)
+        self.frame_rate_entry = tk.Entry(
+            self.setting_window, 
+            font=('Helvetica', 10),
+            width=30)
+        self.entry_manager.set_placeholder(self.frame_rate_entry, "0~120 사이의 값을 입력해주세요.")
+        self.frame_rate_entry.pack(pady=10)
+        
+        self.bit_rate_label = tk.Label(
+            self.setting_window, 
+            text="비트 레이트", 
+            font=('Helvetica', 10))
+        self.bit_rate_label.pack(pady=10)
+        self.bit_rate_entry = tk.Entry(
+            self.setting_window, 
+            font=('Helvetica', 10),
+            width=30)
+        self.entry_manager.set_placeholder(self.bit_rate_entry, "0~50000 사이의 값을 입력해주세요.")
+        self.bit_rate_entry.pack(pady=10)
+        
+        self.save_button = tk.Button(
+            self.setting_window, 
+            text="저장", 
+            command=self.button_manager.save_setting)
+        self.save_button.pack(pady=10)
+        
+        self.close_button = tk.Button(
+            self.setting_window, 
+            text="닫기", 
+            command=lambda: [
+                self.close_setting_screen(), 
+                self.label_manager.update_setting_value_label()
+            ]
+        )
+        self.close_button.pack(pady=10)
+        
+    def close_setting_screen(self):
+        """설정 화면 닫기"""
+        if hasattr(self, 'setting_window'):
+            self.setting_window.destroy()
+            self.label_manager.update_setting_value_label()
+            
     def execute_video_encoding(self):
         """비디오 인코딩 실행
         
