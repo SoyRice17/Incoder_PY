@@ -73,13 +73,11 @@ class ButtonManager:
             self.resolution = self.gui_instance.resolution_combobox.get()
             self.crf = self.gui_instance.crf_entry.get()
             self.frame_rate = self.gui_instance.frame_rate_entry.get()
-            self.bit_rate = self.gui_instance.bit_rate_entry.get()
             
             self.config_manager.config["setting"]["codec"] = self.codec
             self.config_manager.config["setting"]["resolution"] = self.resolution
             self.config_manager.config["setting"]["crf"] = self.crf
             self.config_manager.config["setting"]["frame_rate"] = self.frame_rate
-            self.config_manager.config["setting"]["bit_rate"] = self.bit_rate
             
             self.config_manager.save_config()
             self.gui_instance.close_setting_screen()

@@ -404,18 +404,6 @@ class GuiManager:
         self.entry_manager.set_placeholder(self.frame_rate_entry, "0~120 사이의 값을 입력해주세요.")
         self.frame_rate_entry.pack(pady=10)
         
-        self.bit_rate_label = tk.Label(
-            self.setting_window, 
-            text="비트 레이트", 
-            font=('Helvetica', 10))
-        self.bit_rate_label.pack(pady=10)
-        self.bit_rate_entry = tk.Entry(
-            self.setting_window, 
-            font=('Helvetica', 10),
-            width=30)
-        self.entry_manager.set_placeholder(self.bit_rate_entry, "0~50000 사이의 값을 입력해주세요.")
-        self.bit_rate_entry.pack(pady=10)
-        
         self.save_button = tk.Button(
             self.setting_window, 
             text="저장", 

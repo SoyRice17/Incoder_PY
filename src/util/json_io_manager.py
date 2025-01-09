@@ -23,8 +23,7 @@ class JsonIOManager:
                 "codec": "H.264",
                 "resolution": "1920x1080",
                 "crf": "23",
-                "frame_rate": "30",
-                "bit_rate": "15000"
+                "frame_rate": "30"
             }
         }
         # 디렉토리가 없으면 생성
