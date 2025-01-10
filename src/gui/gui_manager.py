@@ -367,7 +367,7 @@ class GuiManager:
         self.codec_label.pack(pady=10)
         self.codec_combobox = ttk.Combobox(
             self.setting_window, 
-            values=["H.264", "H.265", "AV1"])
+            values=["H.264", "H.265", "AV1","VP9"])
         self.codec_combobox.pack(pady=10)
         
         self.resolution_label = tk.Label(

@@ -41,10 +41,21 @@ class VideoEncoder:
                     output_file = os.path.join(self.output_path, f"{keyword}_combined.mp4")
                     self.io.log(f"출력 파일 경로: {output_file}")
                     
+                    #코덱 설정
+                    codec = self.encoding_settings['codec']
+                    if codec == "H.264":
+                        codec = 'libx264'
+                    elif codec == "H.265":
+                        codec = 'libx265'
+                    elif codec == "AV1":
+                        codec = 'libaom-av1'
+                    elif codec == "VP9":
+                        codec = 'libvpx-vp9'
+
                     # ffmpeg 명령 설정
                     stream = ffmpeg.input('input.txt', f='concat', safe=0)
                     stream = ffmpeg.output(stream, output_file,
-                        vcodec='libx264',
+                        vcodec=codec,
                         r=self.encoding_settings['frame_rate'],
                         s=self.encoding_settings['resolution'],
                         crf=self.encoding_settings['crf']
