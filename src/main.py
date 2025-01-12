@@ -14,6 +14,7 @@ def init_app():
 if __name__ == "__main__":
     init_app()
 
+# 죄송합니다 하루만 날먹 하겠습니다.
 
 ### todo
 ## 인코딩 관련 개선사항
