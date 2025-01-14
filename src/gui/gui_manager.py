@@ -265,6 +265,7 @@ class GuiManager:
         self.delete_button.pack(side=tk.LEFT, fill=tk.X, expand=True, padx=15)
         self.execute_button.pack(side=tk.LEFT, fill=tk.X, expand=True, padx=15)
         self.setting_button.pack(side=tk.LEFT, fill=tk.X, expand=True, padx=15)
+        self.create_scheduler_controls()
     
     def initialize_main_screen(self):
         """메인 화면 초기화를 수행
@@ -443,6 +444,58 @@ class GuiManager:
         무한 루프로 동작합니다.
         """
         self.root.mainloop() #mainloop: 윈도우 이벤트 루프를 시작하는 메서드
+
+    def create_scheduler_controls(self):
+        """스케줄러 제어 위젯 생성"""
+        self.scheduler_frame = tk.Frame(self.button_frame)
+        self.scheduler_frame.pack(side=tk.LEFT, fill=tk.X, expand=True, padx=15)
+        
+        self.interval_entry = tk.Entry(self.scheduler_frame, width=10)
+        self.interval_entry.insert(0, "30")  # 기본본값 30분
+        self.interval_entry.pack(side=tk.LEFT, padx=5)
+        
+        self.start_scheduler_button = tk.Button(
+            self.scheduler_frame,
+            text="스케줄러 시작",
+            command=self.start_scheduler
+        )
+        self.start_scheduler_button.pack(side=tk.LEFT, padx=5)
+        
+        self.stop_scheduler_button = tk.Button(
+            self.scheduler_frame,
+            text="스케줄러 중지",
+            command=self.stop_scheduler,
+            state=tk.DISABLED
+        )
+        self.stop_scheduler_button.pack(side=tk.LEFT, padx=5)
+
+    def start_scheduler(self):
+        """스케줄러 시작"""
+        try:
+            interval = int(self.interval_entry.get())
+            if interval < 1:
+                raise ValueError("간격은 1분 이상이어야 합니다.")
+            
+            from util import EncoderScheduler
+            self.scheduler = EncoderScheduler(self)
+            self.scheduler.start_scheduler(interval)
+            
+            self.start_scheduler_button.config(state=tk.DISABLED)
+            self.stop_scheduler_button.config(state=tk.NORMAL)
+            self.interval_entry.config(state=tk.DISABLED)
+            
+        except ValueError as e:
+            self.io.log(f"잘못된 입력: {e}")
+        except Exception as e:
+            self.io.log(f"스케줄러 시작 오류: {e}")
+
+    def stop_scheduler(self):
+        """스케줄러 중지"""
+        if hasattr(self, 'scheduler'):
+            self.scheduler.stop_scheduler()
+            self.start_scheduler_button.config(state=tk.NORMAL)
+            self.stop_scheduler_button.config(state=tk.DISABLED)
+            self.interval_entry.config(state=tk.NORMAL)
 
 if __name__ == "__main__":
     gui = GuiManager()
